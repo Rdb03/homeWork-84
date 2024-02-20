@@ -70,4 +70,27 @@ taskRouter.put('/:id', async (req, res, next) => {
     }
 });
 
+taskRouter.delete('/:id', async (req, res, next) => {
+    try {
+        const taskId = req.params.id;
+        const userId = req.body.user;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({ error: 'Task not found' });
+        }
+
+        if (task.user.toString() !== userId) {
+            return res.status(403).json({ error: 'You do not have permission to delete this task' });
+        }
+
+        await Task.deleteOne({ _id: taskId });
+
+        res.json({ message: 'Task deleted successfully' });
+    } catch (e) {
+        next(e);
+    }
+});
+
 export default taskRouter;
