@@ -12,3 +12,10 @@ interface UserMethods {
 }
 
 type UserModel = Model<UserFields, {}, UserMethods>;
+
+export interface ITask {
+    user: string,
+    title: string,
+    description: string,
+    status: string,
+}
