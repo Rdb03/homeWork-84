@@ -43,4 +43,31 @@ taskRouter.post('/', async (req, res, next) => {
    }
 });
 
+taskRouter.put('/:id', async (req, res, next) => {
+    try {
+        const taskId = req.params.id;
+        const userId = req.body.user;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({ error: 'Task not found' });
+        }
+
+        if (task.user.toString() !== userId) {
+            return res.status(403).json({ error: 'You do not have permission to edit this task' });
+        }
+
+        task.title = req.body.title || task.title;
+        task.description = req.body.description || task.description;
+        task.status = req.body.status || task.status;
+
+        await task.save();
+
+        res.json(task);
+    } catch (e) {
+        next(e);
+    }
+});
+
 export default taskRouter;
